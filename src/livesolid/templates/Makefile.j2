@@ -1,9 +1,18 @@
-run: ./dist/{{ data.new_app_name }}_darwin_amd64_v1/{{ data.new_app_name }}
-	./dist/{{ data.new_app_name }}_darwin_amd64_v1/{{ data.new_app_name }}
+SOURCES := $(shell find . -name '*.go')
+TARGET := ./dist/{{ data.new_app_name }}_darwin_amd64_v1/{{ data.new_app_name }}
 
-./dist/{{ data.new_app_name }}_darwin_amd64_v1/{{ data.new_app_name }}: main.go cmd/*.go
-	gofumpt -w ./..
+run: {{ data.new_app_name }}
+	./{{ data.new_app_name }}
+
+{{ data.new_app_name }}: $(TARGET)
+	cp $< $@
+
+$(TARGET): $(SOURCES)
+	gofumpt -w $<
 	goreleaser build --single-target --snapshot --clean
 
+.PHONY: clean
 clean:
+	rm -f {{ data.new_app_name }}
+	rm -f $(TARGET)
 	rm -rf dist
