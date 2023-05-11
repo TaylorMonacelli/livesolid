@@ -9,8 +9,8 @@ run: {{ data.new_app_name }}
 
 $(TARGET): $(SOURCES)
 	gofumpt -w $(SOURCES)
-	go vet ./...
 	goreleaser build --single-target --snapshot --clean
+	go vet ./...
 
 .PHONY: clean
 clean:
