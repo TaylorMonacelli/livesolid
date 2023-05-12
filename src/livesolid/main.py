@@ -80,7 +80,7 @@ def main(args):
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
     # print(f"The {args.n}-th Fibonacci number is {fib(args.n)}")
-    lib.doit(path=args.path)
+    lib.render_templates(path=args.path)
     _logger.info("Script ends here")
 
 
