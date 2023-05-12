@@ -1,5 +1,20 @@
 SOURCES := $(shell find . -name '*.go')
-TARGET := ./dist/{{ data.new_app_name }}_darwin_amd64_v1/{{ data.new_app_name }}
+
+ifeq ($(shell uname),Darwin)
+    GOOS = darwin
+    GOARCH = amd64
+    EXEEXT =
+else ifeq ($(shell uname),Linux)
+    GOOS = linux
+    GOARCH = $(shell arch)
+    EXEEXT =
+else ifeq ($(shell uname),Windows_NT)
+    GOOS = windows
+    GOARCH = amd64
+    EXEEXT = .exe
+endif
+
+TARGET := ./dist/{{ data.new_app_name }}_$(GOOS)_$(GOARCH)_v1/{{ data.new_app_name }}$(EXEEXT)
 
 run: {{ data.new_app_name }}
 	./{{ data.new_app_name }}
@@ -9,8 +24,8 @@ run: {{ data.new_app_name }}
 
 $(TARGET): $(SOURCES)
 	gofumpt -w $(SOURCES)
-	goreleaser build --single-target --snapshot --clean
 	go vet ./...
+	GOOS=$(GOOS) GOARCH=$(GOARCH) goreleaser build --single-target --snapshot --clean
 
 .PHONY: clean
 clean:
