@@ -9,11 +9,23 @@ loader = jinja2.FileSystemLoader(searchpath=templates_dir)
 env = jinja2.Environment(loader=loader, keep_trailing_newline=True)
 
 
-def render_templates(path: pathlib.Path):
-    makefile(path)
-    goreleaser(path)
-    github_workflows_ci(path)
-    github_workflows_release(path)
+def render_templates(project_path: pathlib.Path):
+    makefile(project_path)
+    goreleaser(project_path)
+    github_workflows_ci(project_path)
+    github_workflows_release(project_path)
+    create_gitingore(project_path)
+
+
+def create_gitingore(_dir: pathlib.Path):
+    gitignore = _dir / ".gitignore"
+    gitignore.touch()
+
+    # Check if 'dist/' is already in .gitignore
+    if "dist/" not in gitignore.read_text():
+        # Append 'dist/' to .gitignore
+        with gitignore.open(mode="a") as f:
+            f.write("\ndist/\n")
 
 
 def goreleaser(path: pathlib.Path):
