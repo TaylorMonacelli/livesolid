@@ -19,7 +19,7 @@ else ifeq ($(OS),Windows_NT)
 endif
 
 APP := {{ data.new_app_name }}$(EXEEXT)
-TARGET := ./dist/palehorn_$(GOOS)_$(GOARCH)_v1/$(APP)
+TARGET := ./dist/{{ data.new_app_name }}_$(GOOS)_$(GOARCH)_v1/$(APP)
 
 $(APP): $(TARGET)
 	cp $< $@
