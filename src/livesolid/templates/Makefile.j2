@@ -10,7 +10,7 @@ ifeq ($(shell uname),Darwin)
     EXEEXT =
 else ifeq ($(shell uname),Linux)
     GOOS = linux
-    GOARCH = $(shell arch)
+    GOARCH = amd64
     EXEEXT =
 else ifeq ($(OS),Windows_NT)
     GOOS = windows
