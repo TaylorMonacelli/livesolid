@@ -1,5 +1,7 @@
+import os
 import pathlib
 
+import git
 import jinja2
 import pkg_resources
 
@@ -9,12 +11,13 @@ loader = jinja2.FileSystemLoader(searchpath=templates_dir)
 env = jinja2.Environment(loader=loader, keep_trailing_newline=True)
 
 
-def render_templates(project_path: pathlib.Path):
+def render_templates(project_path: pathlib.Path, commit_changes: bool = True):
     makefile(project_path)
     goreleaser(project_path)
     github_workflows_ci(project_path)
     github_workflows_release(project_path)
     create_gitingore(project_path)
+    commit_boilerplate_files(project_path, commit_changes)
 
 
 def create_gitingore(_dir: pathlib.Path):
@@ -72,3 +75,30 @@ def github_workflows_release(path: pathlib.Path):
     }
     out = template.render(data=data)
     out_path.write_text(out)
+
+
+def commit_boilerplate_files(project_path: pathlib.Path, commit_changes: bool):
+    if not commit_changes:
+        print(f"There are no changes to commit in {pathlib.Path.cwd()}, exitting.")
+        return
+
+    git_dir = project_path / ".git"
+    if not os.path.isdir(git_dir):
+        print(f"Dir {git_dir} does not exist. The new files have not been committed.")
+        return
+
+    repo = git.Repo(project_path)
+    boilerplate_files = [
+        ".gitignore",
+        ".goreleaser.yaml",
+        "Makefile",
+        ".github/workflows/ci.yml",
+        ".github/workflows/release.yml",
+    ]
+
+    # Add boilerplate files to git
+    for file in boilerplate_files:
+        repo.git.add(file)
+
+    # Commit boilerplate files
+    repo.index.commit("Boilerplate")
