@@ -43,14 +43,20 @@ def goreleaser(path: pathlib.Path):
 
 
 def makefile(path: pathlib.Path):
-    template = env.get_template("Makefile.j2")
-    out_path = pathlib.Path("Makefile")
+    makefiles = [
+        {"tpl": "Makefile.j2", "out": "Makefile"},
+        {"tpl": "Makefile2.j2", "out": "Makefile2"},
+    ]
 
-    data = {
-        "new_app_name": pathlib.Path(path).name,
-    }
-    out = template.render(data=data)
-    out_path.write_text(out)
+    for makefile in makefiles:
+        template = env.get_template(makefile["tpl"])
+        out_path = pathlib.Path(makefile["out"])
+
+        data = {
+            "new_app_name": pathlib.Path(path).name,
+        }
+        out = template.render(data=data)
+        out_path.write_text(out)
 
 
 def github_workflows_ci(path: pathlib.Path):
