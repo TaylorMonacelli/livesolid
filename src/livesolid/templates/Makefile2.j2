@@ -1,7 +1,7 @@
 BIN := {{ data.new_app_name }}
 
 GOPATH := $(shell go env GOPATH)
-GO_FILES := $(shell find . -name "*.go")
+GO_FILES := $(shell find . -name "*.go" -o -name go.mod -o -name go.sum)
 
 $(BIN): $(GO_FILES)
 	gofumpt -w $^
